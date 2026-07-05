@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
     inputs:
       run_device:
-        description: Build APK and run Maestro on Android emulator
+        description: Build APK and run Maestro on Android emulator (optional, ~30–60 min)
         type: boolean
         default: false
       run_full_suite:
@@ -16,8 +16,6 @@ on:
     paths:
       - "apps/mobile/**"
       - ".github/workflows/p7-mobile-maestro-e2e.yml"
-  schedule:
-    - cron: "0 3 * * 0"
 
 concurrency:
   group: p7-mobile-maestro-${{ github.workflow }}-${{ github.ref }}
@@ -49,7 +47,7 @@ jobs:
   maestro-device:
     name: Maestro device E2E (emulator)
     needs: maestro-scaffold
-    if: inputs.run_device || github.event_name == 'schedule'
+    if: github.event_name == 'workflow_dispatch' && inputs.run_device == true
     runs-on: ubuntu-latest
     timeout-minutes: 120
     steps:
