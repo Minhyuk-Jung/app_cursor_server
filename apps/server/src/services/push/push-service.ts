@@ -223,8 +223,14 @@ export class PushService {
               attempt,
               scheduledAt,
             },
-          }).catch((err: { code?: string }) => {
-            if (err.code !== "P2002") throw err;
+          }).catch((err: unknown) => {
+            if (
+              err instanceof Prisma.PrismaClientKnownRequestError &&
+              err.code === "P2002"
+            ) {
+              return;
+            }
+            throw err;
           });
         }
         return;
