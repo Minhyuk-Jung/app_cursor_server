@@ -99,6 +99,12 @@ jobs:
           name: mobile-debug-apk
           path: apps/mobile/android/app/build/outputs/apk/debug/app-debug.apk
 
+      - name: Enable KVM for hardware-accelerated emulator
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
       - name: Run Maestro on emulator
         uses: reactivecircus/android-emulator-runner@v2
         with:
@@ -106,7 +112,10 @@ jobs:
           target: google_apis
           arch: x86_64
           profile: Nexus 6
-          disable-animations: true
+          cores: 4
+          emulator-boot-timeout: 900
+          disable-animations: false
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -no-snapshot-save
           script: bash apps/mobile/scripts/maestro-emulator-ci.sh
 
       - name: Upload Maestro debug output
