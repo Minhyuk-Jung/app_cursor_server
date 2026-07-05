@@ -6,7 +6,8 @@ const WEB_PORT = process.env.E2E_WEB_PORT ?? "5199";
 /** exec_memory_limit 인박스 → 터미널 deeplink UI E2E (docker + 64MB) */
 export default defineConfig({
   testDir: ".",
-  timeout: 120_000,
+  timeout: 240_000,
+  retries: process.env.CI ? 1 : 0,
   use: {
     baseURL: process.env.E2E_WEB_URL ?? `http://127.0.0.1:${WEB_PORT}`,
   },

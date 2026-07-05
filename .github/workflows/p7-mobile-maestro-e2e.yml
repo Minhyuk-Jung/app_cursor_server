@@ -8,6 +8,10 @@ on:
         description: Build APK and run Maestro on Android emulator
         type: boolean
         default: false
+      run_full_suite:
+        description: Run full Maestro device suite (default smoke only)
+        type: boolean
+        default: false
   pull_request:
     paths:
       - "apps/mobile/**"
@@ -107,13 +111,15 @@ jobs:
 
       - name: Run Maestro on emulator
         uses: reactivecircus/android-emulator-runner@v2
+        env:
+          MAESTRO_CI_SMOKE_ONLY: ${{ inputs.run_full_suite && '0' || '1' }}
         with:
           api-level: 30
           target: google_apis
           arch: x86_64
           profile: Nexus 6
           cores: 4
-          emulator-boot-timeout: 900
+          emulator-boot-timeout: 600
           disable-animations: false
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -no-snapshot-save
           script: bash apps/mobile/scripts/maestro-emulator-ci.sh

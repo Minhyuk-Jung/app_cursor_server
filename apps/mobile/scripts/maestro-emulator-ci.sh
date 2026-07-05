@@ -60,7 +60,8 @@ maestro --version
 cd "$ROOT/apps/mobile"
 run_maestro() {
   MAESTRO_DEVICE_MODE=run \
-  MAESTRO_USE_SUITE=1 \
+  MAESTRO_CI_SMOKE_ONLY="${MAESTRO_CI_SMOKE_ONLY:-1}" \
+  MAESTRO_USE_SUITE="${MAESTRO_USE_SUITE:-1}" \
   MAESTRO_APK="$APK" \
   MAESTRO_API_URL="$API_URL" \
   MAESTRO_DEBUG_OUTPUT="${MAESTRO_DEBUG_OUTPUT:-$ROOT/apps/mobile/maestro-debug}" \

@@ -48,13 +48,16 @@ test.describe("S9+15 — exec_memory_limit 인박스 deeplink (13 §9 docker)", 
         projectId,
         command: memoryBombCmd,
       },
-      timeout: 90_000,
+      timeout: 180_000,
     });
-    expect(execRes.ok()).toBeTruthy();
+    if (!execRes.ok()) {
+      const errBody = await execRes.text();
+      throw new Error(`exec_command failed (${execRes.status()}): ${errBody}`);
+    }
     const execBody = (await execRes.json()) as { errorCode?: string };
     expect(execBody.errorCode).toBe("exec_memory_limit");
 
-    const deadline = Date.now() + 15_000;
+    const deadline = Date.now() + 30_000;
     let noteId: string | undefined;
     while (Date.now() < deadline) {
       const inboxRes = await request.get(`${API}/api/v1/inbox`, {

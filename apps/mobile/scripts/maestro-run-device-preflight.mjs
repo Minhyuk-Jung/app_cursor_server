@@ -20,7 +20,7 @@ const scriptContent = readFileSync(emulatorScript, "utf8");
 for (const snippet of [
   "adb reverse",
   "e2e:server",
-  "MAESTRO_USE_SUITE=1",
+  "MAESTRO_CI_SMOKE_ONLY",
   "trap cleanup EXIT",
 ]) {
   if (!scriptContent.includes(snippet)) {

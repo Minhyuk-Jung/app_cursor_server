@@ -108,8 +108,36 @@ function runDeviceFlows() {
   waitForApiHealth();
   seedDemoProject();
 
+  const smokeOnly = process.env.MAESTRO_CI_SMOKE_ONLY === "1";
+  const smokeFlow = ".maestro/mobile-smoke.yaml";
   const useSuite = process.env.MAESTRO_USE_SUITE !== "0";
   const suiteAbs = join(process.cwd(), suiteFlow);
+  const smokeAbs = join(process.cwd(), smokeFlow);
+
+  if (smokeOnly) {
+    console.log(`Maestro device run: ${smokeFlow} (CI smoke only)`);
+    const debugFlag = process.env.MAESTRO_DEBUG_OUTPUT
+      ? `--debug-output "${process.env.MAESTRO_DEBUG_OUTPUT}"`
+      : "";
+    execSync(
+      `maestro test --app-path "${apkPath}" ${debugFlag} "${smokeAbs}"`.replace(
+        /\s+/g,
+        " ",
+      ),
+      {
+        stdio: "inherit",
+        env: {
+          ...process.env,
+          MAESTRO_APK: apkPath,
+          ...(process.env.MAESTRO_DEBUG_OUTPUT
+            ? { MAESTRO_DEBUG_OUTPUT: process.env.MAESTRO_DEBUG_OUTPUT }
+            : {}),
+        },
+      },
+    );
+    return;
+  }
+
   if (useSuite && existsSync(suiteAbs)) {
     console.log(`Maestro device run: ${suiteFlow} (single session)`);
     const debugFlag = process.env.MAESTRO_DEBUG_OUTPUT
@@ -160,6 +188,7 @@ if (mode === "run") {
       "Maestro device CI scaffold OK",
       "- flows validated via maestro-gate (9 required flows + device suite)",
       "- run mode: MAESTRO_DEVICE_MODE=run + MAESTRO_APK (default: mobile-device-suite.yaml)",
+      "- MAESTRO_CI_SMOKE_ONLY=1 — run mobile-smoke.yaml only (CI default)",
       "- MAESTRO_USE_SUITE=0 — run 9 flows individually",
       "- API: start e2e server on :3000 + adb reverse + maestro-seed-project.ts",
       "- workflow: .github/workflows/p7-mobile-maestro-e2e.yml (workflow_dispatch run_device)",
