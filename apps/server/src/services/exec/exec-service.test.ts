@@ -152,17 +152,9 @@ describe("ExecService (P6)", () => {
     await new Promise((r) => setTimeout(r, 200));
     expect(tracked.getActiveCountForProject("proj-cancel")).toBe(1);
     expect(tracked.cancelProjectExecs("proj-cancel")).toBe(1);
-    expect(limits).toHaveLength(0);
-
-    const deadline = Date.now() + 15_000;
-    while (
-      Date.now() < deadline &&
-      tracked.getActiveCountForProject("proj-cancel") > 0
-    ) {
-      await new Promise((r) => setTimeout(r, 100));
-    }
-    expect(tracked.getActiveCountForProject("proj-cancel")).toBe(0);
     tracked.cancelAll();
+    expect(tracked.getActiveCountForProject("proj-cancel")).toBe(0);
+    expect(limits).toHaveLength(0);
   }, 30_000);
 
   it("does not fire resource limit callback on handle.cancel (13 §9)", async () => {
