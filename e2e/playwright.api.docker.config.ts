@@ -3,6 +3,7 @@ import { defineConfig } from "@playwright/test";
 const API_PORT = process.env.E2E_PORT ?? "3098";
 const API_URL = process.env.E2E_API_URL ?? `http://127.0.0.1:${API_PORT}`;
 process.env.E2E_API_URL = API_URL;
+process.env.E2E_SANDBOX_MODE = "docker";
 
 /** S17 API E2E — docker sandbox (P6 gate, 21-test-strategy) */
 export default defineConfig({

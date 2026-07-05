@@ -61,6 +61,10 @@ test.describe("S17 — 터미널 UI (P6 E2E, 15+13)", () => {
   });
 
   test("프리뷰 iframe에 upstream HTML 표시 (UR-10)", async ({ page, request }) => {
+    test.skip(
+      process.env.E2E_SANDBOX_MODE === "docker",
+      "docker preview upstream must listen inside container bridge network",
+    );
     const { createServer } = await import("node:http");
     const stub = await new Promise<{
       server: import("node:http").Server;

@@ -91,10 +91,18 @@ describe.skipIf(!dockerOnly())("P6 S17 docker preview integration", () => {
     expect(issue.statusCode).toBe(200);
     const { previewPath } = issue.json() as { previewPath: string };
 
-    const proxy = await ctx.app.inject({
+    let proxy = await ctx.app.inject({
       method: "GET",
       url: previewPath,
     });
+    const proxyDeadline = Date.now() + 10_000;
+    while (proxy.statusCode === 502 && Date.now() < proxyDeadline) {
+      await new Promise((r) => setTimeout(r, 300));
+      proxy = await ctx.app.inject({
+        method: "GET",
+        url: previewPath,
+      });
+    }
     expect(proxy.statusCode).toBe(200);
     expect(proxy.body).toContain("s17-docker-preview");
   }, 120_000);

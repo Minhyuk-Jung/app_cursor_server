@@ -6,6 +6,7 @@ const API_URL = process.env.E2E_API_URL ?? `http://127.0.0.1:${API_PORT}`;
 const WEB_URL = process.env.E2E_WEB_URL ?? `http://127.0.0.1:${WEB_PORT}`;
 process.env.E2E_API_URL = API_URL;
 process.env.E2E_WEB_URL = WEB_URL;
+process.env.E2E_SANDBOX_MODE = "docker";
 
 /** S17 UI E2E — docker sandbox (13 §10, 21-test-strategy P6) */
 export default defineConfig({

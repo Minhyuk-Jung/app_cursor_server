@@ -155,6 +155,10 @@ test.describe("S17 — 터미널·프리뷰 (P6 E2E smoke)", () => {
   });
 
   test("프리뷰 WebSocket HMR 프록시", async ({ request }) => {
+    test.skip(
+      process.env.E2E_SANDBOX_MODE === "docker",
+      "docker preview upstream must listen inside container bridge network",
+    );
     const { WebSocketServer } = await import("ws");
     const upstream = await new Promise<{
       server: import("ws").WebSocketServer;
@@ -205,6 +209,10 @@ test.describe("S17 — 터미널·프리뷰 (P6 E2E smoke)", () => {
   });
 
   test("프리뷰 HTTP 프록시 GET", async ({ request }) => {
+    test.skip(
+      process.env.E2E_SANDBOX_MODE === "docker",
+      "docker preview upstream must listen inside container bridge network",
+    );
     const { createServer } = await import("node:http");
     const stub = await new Promise<{ server: import("node:http").Server; port: number }>(
       (resolve, reject) => {

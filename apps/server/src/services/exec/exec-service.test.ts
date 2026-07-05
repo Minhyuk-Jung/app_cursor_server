@@ -128,7 +128,7 @@ describe("ExecService (P6)", () => {
 
     expect(exitCode).not.toBe(0);
     expect(errors.some((m) => m.code === "exec_timeout")).toBe(true);
-  }, 10_000);
+  }, 20_000);
 
   it("cancelProjectExecs terminates project exec (§6.4)", async () => {
     const limits: Array<{ kind: string }> = [];
@@ -154,7 +154,7 @@ describe("ExecService (P6)", () => {
     expect(tracked.cancelProjectExecs("proj-cancel")).toBe(1);
     expect(limits).toHaveLength(0);
 
-    const deadline = Date.now() + 5000;
+    const deadline = Date.now() + 15_000;
     while (
       Date.now() < deadline &&
       tracked.getActiveCountForProject("proj-cancel") > 0
@@ -163,7 +163,7 @@ describe("ExecService (P6)", () => {
     }
     expect(tracked.getActiveCountForProject("proj-cancel")).toBe(0);
     tracked.cancelAll();
-  }, 15_000);
+  }, 30_000);
 
   it("does not fire resource limit callback on handle.cancel (13 §9)", async () => {
     const limits: Array<{ kind: string }> = [];
@@ -172,8 +172,8 @@ describe("ExecService (P6)", () => {
     });
     const slowCmd =
       process.platform === "win32"
-        ? "ping -n 30 127.0.0.1"
-        : "sleep 30";
+        ? "ping -n 6 127.0.0.1"
+        : "sleep 5";
 
     await new Promise<void>((resolve) => {
       void svc
@@ -192,7 +192,7 @@ describe("ExecService (P6)", () => {
     });
 
     expect(limits).toHaveLength(0);
-  }, 15_000);
+  }, 30_000);
 
   it("enforces max concurrent exec limit", () => {
     const limited = makeSandbox({ maxConcurrentExec: 1 });

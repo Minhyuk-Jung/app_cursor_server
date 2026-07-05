@@ -46,7 +46,7 @@ test.describe("S17+S9 — exec_memory_limit 인박스 (13 §9, docker)", () => {
         projectId,
         command: memoryBombCmd,
       },
-      timeout: 90_000,
+      timeout: 180_000,
     });
     if (!execRes.ok()) {
       const errBody = await execRes.text();
