@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url";
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
 import { createApp, type AppContext } from "../../app.js";
 import { prisma, disconnectDb } from "../../db/client.js";
+import { useTestDatabase } from "../../test-helpers/db.js";
 import {
   DockerSandboxManager,
   isDockerAvailable,
@@ -25,6 +26,7 @@ describe.skipIf(!isDockerAvailable())(
     const apiKey = process.env.CURSOR_API_KEY ?? "";
 
     beforeAll(async () => {
+      await useTestDatabase("file:./test-session-mgr-shared-rt.db");
       const sdkImage = process.env.SANDBOX_DOCKER_IMAGE ?? DEFAULT_SDK_IMAGE;
       if (!process.env.SANDBOX_DOCKER_IMAGE) {
         execFileSync(

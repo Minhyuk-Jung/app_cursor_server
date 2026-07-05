@@ -6,6 +6,7 @@ import { fileURLToPath } from "node:url";
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
 import { createApp, type AppContext } from "../../app.js";
 import { prisma, disconnectDb } from "../../db/client.js";
+import { useTestDatabase } from "../../test-helpers/db.js";
 import {
   DockerSandboxManager,
   isDockerAvailable,
@@ -30,6 +31,7 @@ describe.skipIf(!isDockerAvailable())(
     const manager = new DockerSandboxManager();
 
     beforeAll(async () => {
+      await useTestDatabase("file:./test-container-sdk-bridge.db");
       sdkImage = resolveSdkImage();
       if (!process.env.SANDBOX_DOCKER_IMAGE) {
         execFileSync(

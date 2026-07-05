@@ -36,7 +36,7 @@ jobs:
         env:
           SANDBOX_DOCKER_IMAGE: cursor-sandbox-sdk:ci
         run: |
-          npx vitest run \
+          npx vitest run --no-file-parallelism --maxWorkers=1 \
             src/services/exec/docker-sandbox-manager.test.ts \
             src/services/exec/p6-docker.integration.test.ts \
             src/core/sdk/container-sdk-bridge.test.ts \
@@ -125,10 +125,14 @@ jobs:
         working-directory: apps/server
         run: npx prisma generate
 
+      - name: Build sandbox-sdk image (ADR-007 POC 3)
+        run: docker build -t cursor-sandbox-sdk:ci apps/server/docker/sandbox-sdk
+
       - name: S17 API E2E (docker)
         run: npx playwright test -c e2e/playwright.api.docker.config.ts e2e/p6-scenarios.spec.ts
         env:
           CI: "1"
+          SANDBOX_DOCKER_IMAGE: cursor-sandbox-sdk:ci
 
   s17-exec-notif-api-e2e:
     name: S17 exec_timeout inbox E2E (13 §9)
@@ -339,10 +343,14 @@ jobs:
       - name: Install Playwright Chromium
         run: npx playwright install chromium
 
+      - name: Build sandbox-sdk image (ADR-007 POC 3)
+        run: docker build -t cursor-sandbox-sdk:ci apps/server/docker/sandbox-sdk
+
       - name: TerminalPanel UI E2E (docker)
         run: npx playwright test -c e2e/playwright.ui.docker.config.ts e2e/p6-ui-scenarios.spec.ts
         env:
           CI: "1"
+          SANDBOX_DOCKER_IMAGE: cursor-sandbox-sdk:ci
 
   s17-inbox-deeplink-ui-e2e:
     name: S17 inbox deeplink UI E2E (09→15)

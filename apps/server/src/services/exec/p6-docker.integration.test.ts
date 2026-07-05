@@ -5,6 +5,7 @@ import path from "node:path";
 import { afterAll, afterEach, beforeAll, describe, expect, it } from "vitest";
 import { createApp, type AppContext } from "../../app.js";
 import { prisma, disconnectDb } from "../../db/client.js";
+import { useTestDatabase } from "../../test-helpers/db.js";
 import {
   DockerSandboxManager,
   isDockerAvailable,
@@ -23,6 +24,7 @@ describe.skipIf(!dockerOnly())("P6 S17 docker preview integration", () => {
   const manager = new DockerSandboxManager();
 
   beforeAll(async () => {
+    await useTestDatabase("file:./test-p6-docker-int.db");
     tmpDir = await mkdtemp(path.join(os.tmpdir(), "p6-docker-int-"));
     ctx = await createApp({ port: 0, sandboxMode: "docker" });
     await ctx.app.listen({ port: 0, host: "127.0.0.1" });
