@@ -1,0 +1,25 @@
+# P7 mobile smoke — Maestro (로컬 dev 빌드 후 실행)
+# maestro test apps/mobile/.maestro/mobile-smoke.yaml
+# 11차+: 설정 smoke + 프로젝트/파일 탭(optional)
+appId: dev.cursor.remote
+---
+- launchApp
+- assertVisible: "Cursor Remote Dev"
+- tapOn:
+    text: "API 설정|설정"
+    optional: true
+- assertVisible:
+    text: "API|서버|저장"
+    optional: true
+- tapOn:
+    text: "프로젝트"
+    optional: true
+- assertVisible:
+    text: "파일|세션|Git|터미널|리뷰"
+    optional: true
+- tapOn:
+    text: "파일"
+    optional: true
+- assertVisible:
+    text: "\\+파일|\\+폴더|검색"
+    optional: true

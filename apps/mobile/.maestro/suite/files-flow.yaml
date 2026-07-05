@@ -1,0 +1,24 @@
+# P7 mobile 27차 — suite session files toolbar
+appId: dev.cursor.remote
+---
+- tapOn:
+    id: "home-tab-projects"
+- extendedWaitUntil:
+    visible: "maestro-e2e"
+    timeout: 45000
+- tapOn: "maestro-e2e"
+- tapOn:
+    id: "project-nav-files"
+- extendedWaitUntil:
+    visible:
+      id: "files-toolbar"
+    timeout: 30000
+- assertVisible:
+    id: "files-add-file"
+- assertVisible:
+    id: "files-add-dir"
+- assertVisible: "README.md"
+- tapOn:
+    id: "project-back-btn"
+- assertVisible:
+    id: "home-tab-projects"

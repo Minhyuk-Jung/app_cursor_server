@@ -1,0 +1,23 @@
+# P7 mobile 25차 — Files 탭 CRUD toolbar smoke (UR-02)
+appId: dev.cursor.remote
+---
+- launchApp
+- assertVisible: "Cursor Remote Dev"
+- tapOn:
+    id: "home-tab-projects"
+    optional: true
+- extendedWaitUntil:
+    visible: "maestro-e2e"
+    timeout: 45000
+- tapOn: "maestro-e2e"
+- tapOn:
+    id: "project-nav-files"
+- extendedWaitUntil:
+    visible:
+      id: "files-toolbar"
+    timeout: 30000
+- assertVisible:
+    id: "files-add-file"
+- assertVisible:
+    id: "files-add-dir"
+- assertVisible: "README.md"

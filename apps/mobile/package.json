@@ -1,0 +1,37 @@
+{
+  "name": "@app/mobile",
+  "version": "0.1.0",
+  "private": true,
+  "main": "index.js",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "test": "vitest run",
+    "test:maestro": "maestro test .maestro/mobile-smoke.yaml .maestro/mobile-settings-flow.yaml .maestro/mobile-project-flow.yaml",
+    "test:maestro:ci": "node scripts/maestro-gate.mjs",
+    "test:maestro:device:ci": "node scripts/maestro-device-ci.mjs",
+    "test:maestro:workflow:ci": "node scripts/maestro-workflow-gate.mjs",
+    "test:maestro:run-device:preflight": "node scripts/maestro-run-device-preflight.mjs",
+    "maestro:seed": "npx tsx scripts/maestro-seed-project.ts"
+  },
+  "dependencies": {
+    "@app/shared": "*",
+    "@react-native-async-storage/async-storage": "2.1.2",
+    "expo": "~52.0.47",
+    "expo-av": "~15.0.2",
+    "expo-constants": "~17.0.8",
+    "expo-file-system": "~18.0.12",
+    "expo-image-picker": "~16.0.6",
+    "expo-notifications": "~0.29.14",
+    "expo-status-bar": "~2.0.1",
+    "react": "18.3.1",
+    "react-native": "0.76.9",
+    "react-native-webview": "13.12.5"
+  },
+  "devDependencies": {
+    "@types/react": "~18.3.12",
+    "typescript": "^5.8.2",
+    "vitest": "^3.0.9"
+  }
+}

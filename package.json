@@ -1,0 +1,29 @@
+{
+  "name": "app-cursor-server",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "build": "npm run build -w @app/shared && npm run build -w @app/server && npm run build -w @app/web",
+    "dev": "npm run dev -w @app/server",
+    "dev:web": "npm run dev -w @app/web",
+    "dev:mobile": "npm run start -w @app/mobile",
+    "test": "npm run test -w @app/shared && npm run test -w @app/server && npm run test -w @app/web && npm run test -w @app/mobile",
+    "test:e2e": "playwright test -c e2e/playwright.config.ts",
+    "test:e2e:s26": "playwright test -c e2e/playwright.ui.s26.config.ts",
+    "test:e2e:s27": "playwright test -c e2e/playwright.ui.s27.config.ts",
+    "test:e2e:s19": "playwright test -c e2e/playwright.ui.s19.config.ts",
+    "test:e2e:s28": "playwright test -c e2e/playwright.ui.s28.config.ts",
+    "test:e2e:s29": "playwright test -c e2e/playwright.ui.s29.config.ts",
+    "test:e2e:s30": "playwright test -c e2e/playwright.ui.s30.config.ts",
+    "p0": "npm run p0 -w @app/server"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.51.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

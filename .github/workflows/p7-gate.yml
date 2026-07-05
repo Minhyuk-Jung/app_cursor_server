@@ -1,0 +1,281 @@
+# 21-test-strategy P7 게이트 — UR-15·UR-16·SEC-03
+name: P7 Gate
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+jobs:
+  p7-integration:
+    name: P7 integration (UR-15/16)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build shared
+        run: npm run build -w @app/shared
+
+      - name: Generate Prisma client
+        working-directory: apps/server
+        run: npx prisma generate
+
+      - name: P7 server integration tests
+        working-directory: apps/server
+        run: |
+          npx vitest run \
+            src/api/channel-source.test.ts \
+            src/api/expo-push.integration.test.ts \
+            src/api/expo-push-send.integration.test.ts \
+            src/services/push/expo-push.test.ts \
+            src/api/attachments-multipart.integration.test.ts \
+            src/api/e2e-session-seed.integration.test.ts \
+            src/api/maestro-inbox-seed.integration.test.ts \
+            src/api/messages-pagination.integration.test.ts \
+            src/api/stt-routes.integration.test.ts \
+            src/api/attachments-send.integration.test.ts \
+            src/api/webhook-signature.integration.test.ts \
+            src/adapters/telegram/telegram-s30.integration.test.ts \
+            src/adapters/intranet/intranet-s31-outbound.integration.test.ts \
+            src/core/session/session-summary.test.ts \
+            src/core/session/session-summary.integration.test.ts \
+            src/core/session/session-manager.summary.test.ts
+
+  p7-s19-ui-e2e:
+    name: S19 session summary UI E2E
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build shared
+        run: npm run build -w @app/shared
+
+      - name: Generate Prisma client
+        working-directory: apps/server
+        run: npx prisma generate
+
+      - name: Install Playwright Chromium
+        run: npx playwright install chromium
+
+      - name: S19 session summary UI E2E
+        run: npm run test:e2e:s19
+        env:
+          CI: "1"
+
+  p7-s28-ui-e2e:
+    name: S28 pagination UI E2E
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build shared
+        run: npm run build -w @app/shared
+
+      - name: Generate Prisma client
+        working-directory: apps/server
+        run: npx prisma generate
+
+      - name: Install Playwright Chromium
+        run: npx playwright install chromium
+
+      - name: S28 pagination UI E2E
+        run: npm run test:e2e:s28
+        env:
+          CI: "1"
+
+  p7-s29-ui-e2e:
+    name: S29 web Git tab UI E2E
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build shared
+        run: npm run build -w @app/shared
+
+      - name: Generate Prisma client
+        working-directory: apps/server
+        run: npx prisma generate
+
+      - name: Install Playwright Chromium
+        run: npx playwright install chromium
+
+      - name: S29 web Git tab UI E2E
+        run: npm run test:e2e:s29
+        env:
+          CI: "1"
+
+  p7-s30-ui-e2e:
+    name: S30 web Markdown preview UI E2E
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build shared
+        run: npm run build -w @app/shared
+
+      - name: Generate Prisma client
+        working-directory: apps/server
+        run: npx prisma generate
+
+      - name: Install Playwright Chromium
+        run: npx playwright install chromium
+
+      - name: S30 web Markdown preview UI E2E
+        run: npm run test:e2e:s30
+        env:
+          CI: "1"
+
+  p7-s26-ui-e2e:
+    name: S26 speech UI E2E
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build shared
+        run: npm run build -w @app/shared
+
+      - name: Generate Prisma client
+        working-directory: apps/server
+        run: npx prisma generate
+
+      - name: Install Playwright Chromium
+        run: npx playwright install chromium
+
+      - name: S26 speech UI E2E
+        run: npm run test:e2e:s26
+        env:
+          CI: "1"
+
+  p7-s27-ui-e2e:
+    name: S27 attachment UI E2E
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build shared
+        run: npm run build -w @app/shared
+
+      - name: Generate Prisma client
+        working-directory: apps/server
+        run: npx prisma generate
+
+      - name: Install Playwright Chromium
+        run: npx playwright install chromium
+
+      - name: S27 attachment UI E2E
+        run: npm run test:e2e:s27
+        env:
+          CI: "1"
+
+  p7-web-unit:
+    name: Web unit (speech + session-ui)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build shared
+        run: npm run build -w @app/shared
+
+      - name: Web speech + api-http tests
+        working-directory: apps/web
+        run: npx vitest run src/lib/speech-send-flow.test.ts src/api/client-api-http.test.ts src/api/client-git.test.ts src/components/file-view-helpers.test.ts
+
+  p7-mobile-unit:
+    name: Mobile unit + Maestro CI gate
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build shared
+        run: npm run build -w @app/shared
+
+      - name: Mobile unit tests (full)
+        run: npm run test -w @app/mobile
+
+      - name: Maestro flow CI gate
+        working-directory: apps/mobile
+        run: npm run test:maestro:ci
+
+      - name: Maestro device CI scaffold
+        working-directory: apps/mobile
+        run: npm run test:maestro:device:ci
+
+      - name: Maestro workflow gate
+        working-directory: apps/mobile
+        run: npm run test:maestro:workflow:ci
+
+      - name: Maestro run_device preflight
+        working-directory: apps/mobile
+        run: npm run test:maestro:run-device:preflight

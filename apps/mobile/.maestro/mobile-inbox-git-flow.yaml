@@ -1,0 +1,17 @@
+# P7 mobile 25차 — 인박스 git_status deeplink → Git 탭 (UR-06/07)
+appId: dev.cursor.remote
+---
+- launchApp
+- assertVisible: "Cursor Remote Dev"
+- tapOn:
+    id: "home-tab-inbox"
+- extendedWaitUntil:
+    visible: "Maestro Git"
+    timeout: 45000
+- tapOn: "Maestro Git"
+- assertVisible: "Git 상태"
+- extendedWaitUntil:
+    visible:
+      id: "git-status-panel"
+    timeout: 30000
+- assertVisible: "upstream 미설정"

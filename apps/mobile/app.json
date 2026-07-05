@@ -1,0 +1,49 @@
+{
+  "expo": {
+    "name": "Cursor Remote Dev",
+    "slug": "cursor-remote-dev",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "backgroundColor": "#0f172a"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "dev.cursor.remote",
+      "infoPlist": {
+        "NSAppTransportSecurity": {
+          "NSAllowsLocalNetworking": true
+        },
+        "NSMicrophoneUsageDescription": "음성 프롬프트(STT) 입력에 사용합니다.",
+        "NSPhotoLibraryUsageDescription": "스크린샷·이미지 첨부에 사용합니다."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#0f172a"
+      },
+      "package": "dev.cursor.remote",
+      "usesCleartextTraffic": true
+    },
+    "plugins": [
+      [
+        "expo-notifications",
+        {
+          "color": "#0f172a"
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "스크린샷·이미지 첨부에 사용합니다."
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "a1b2c3d4-e5f6-4789-a012-cursorremote01"
+      }
+    }
+  }
+}

@@ -1,0 +1,24 @@
+# P7 mobile 27차 — suite session project nav smoke
+appId: dev.cursor.remote
+---
+- assertVisible:
+    id: "home-tab-projects"
+- extendedWaitUntil:
+    visible: "maestro-e2e"
+    timeout: 45000
+- tapOn: "maestro-e2e"
+- assertVisible:
+    id: "project-nav-sessions"
+- tapOn:
+    id: "project-nav-git"
+- assertVisible: "Git 상태"
+- tapOn:
+    id: "project-nav-files"
+- assertVisible: "README.md"
+- tapOn:
+    id: "project-nav-diff"
+- assertVisible: "변경 리뷰"
+- tapOn:
+    id: "project-back-btn"
+- assertVisible:
+    id: "home-tab-projects"

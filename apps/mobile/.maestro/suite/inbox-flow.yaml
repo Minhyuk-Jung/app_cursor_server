@@ -1,0 +1,8 @@
+# P7 mobile 28차 — suite session inbox tab (UR-06)
+appId: dev.cursor.remote
+---
+- tapOn:
+    id: "home-tab-inbox"
+- assertVisible:
+    id: "inbox-screen"
+- assertVisible: "인박스"

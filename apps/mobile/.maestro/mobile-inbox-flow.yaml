@@ -1,0 +1,10 @@
+# P7 mobile 29차 — 인박스 탭 smoke (UR-06)
+appId: dev.cursor.remote
+---
+- launchApp
+- assertVisible: "Cursor Remote Dev"
+- tapOn:
+    id: "home-tab-inbox"
+- assertVisible:
+    id: "inbox-screen"
+- assertVisible: "인박스"

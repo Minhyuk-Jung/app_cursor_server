@@ -1,0 +1,121 @@
+# P7 mobile 17차 — Maestro 디바이스 E2E (scaffold + emulator run)
+name: P7 Mobile Maestro E2E
+
+on:
+  workflow_dispatch:
+    inputs:
+      run_device:
+        description: Build APK and run Maestro on Android emulator
+        type: boolean
+        default: false
+  pull_request:
+    paths:
+      - "apps/mobile/**"
+      - ".github/workflows/p7-mobile-maestro-e2e.yml"
+  schedule:
+    - cron: "0 3 * * 0"
+
+concurrency:
+  group: p7-mobile-maestro-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  maestro-scaffold:
+    name: Maestro device CI scaffold
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Maestro device CI scaffold
+        working-directory: apps/mobile
+        run: npm run test:maestro:device:ci
+
+      - name: Maestro run_device preflight
+        working-directory: apps/mobile
+        run: npm run test:maestro:run-device:preflight
+
+  maestro-device:
+    name: Maestro device E2E (emulator)
+    needs: maestro-scaffold
+    if: inputs.run_device || github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build shared
+        run: npm run build -w @app/shared
+
+      - name: Generate Prisma client
+        working-directory: apps/server
+        run: npx prisma generate
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+            apps/mobile/android/.gradle
+          key: gradle-maestro-${{ runner.os }}-${{ hashFiles('apps/mobile/android/**/*.gradle*', 'apps/mobile/android/gradle/wrapper/gradle-wrapper.properties') }}
+          restore-keys: |
+            gradle-maestro-${{ runner.os }}-
+
+      - name: Prebuild Android (Expo)
+        working-directory: apps/mobile
+        env:
+          EXPO_PUBLIC_MAESTRO_E2E: "1"
+        run: npx expo prebuild --platform android --no-install
+
+      - name: Build debug APK
+        working-directory: apps/mobile/android
+        run: ./gradlew assembleDebug
+
+      - name: Upload debug APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: mobile-debug-apk
+          path: apps/mobile/android/app/build/outputs/apk/debug/app-debug.apk
+
+      - name: Run Maestro on emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 30
+          target: google_apis
+          arch: x86_64
+          profile: Nexus 6
+          disable-animations: true
+          script: bash apps/mobile/scripts/maestro-emulator-ci.sh
+
+      - name: Upload Maestro debug output
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: maestro-debug-output
+          path: apps/mobile/maestro-debug
+          if-no-files-found: ignore

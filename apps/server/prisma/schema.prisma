@@ -1,0 +1,185 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  apiKeys   ApiKey[]
+}
+
+model ApiKey {
+  id         String    @id @default(cuid())
+  userId     String
+  user       User      @relation(fields: [userId], references: [id])
+  hashedKey  String    @unique
+  scopes     String
+  expiresAt  DateTime?
+  createdAt  DateTime  @default(now())
+}
+
+model Project {
+  id           String    @id @default(cuid())
+  userId       String    @default("dev-user")
+  name         String
+  rootPath     String
+  status       String    @default("active")
+  pinned       Boolean   @default(false)
+  lastActiveAt DateTime?
+  createdAt    DateTime  @default(now())
+  sessions     Session[]
+}
+
+model Session {
+  id        String    @id @default(cuid())
+  projectId String
+  project   Project   @relation(fields: [projectId], references: [id])
+  agentId   String?
+  title     String?
+  summary   String?
+  branch    String?
+  model     String
+  status    String    @default("idle")
+  source    String    @default("web")
+  createdAt DateTime  @default(now())
+  messages  Message[]
+  runs      Run[]
+}
+
+model Message {
+  id              String   @id @default(cuid())
+  sessionId       String
+  session         Session  @relation(fields: [sessionId], references: [id])
+  role            String
+  content         String
+  attachmentsJson String?
+  runId           String?
+  createdAt       DateTime @default(now())
+}
+
+model Run {
+  id           String   @id @default(cuid())
+  sessionId    String
+  session      Session  @relation(fields: [sessionId], references: [id])
+  status       String   @default("queued")
+  snapshotRef  String?
+  createdAt    DateTime @default(now())
+  events       RunEvent[]
+}
+
+model RunEvent {
+  id           String   @id @default(cuid())
+  globalOffset Int      @unique
+  runId        String
+  run          Run      @relation(fields: [runId], references: [id])
+  seq          Int
+  type         String
+  payload      String
+  projectId    String
+  sessionId    String
+  createdAt    DateTime @default(now())
+
+  @@unique([runId, seq])
+  @@index([projectId, globalOffset])
+  @@index([sessionId, seq])
+}
+
+model IdempotencyRecord {
+  requestId  String   @id
+  response   String
+  createdAt  DateTime @default(now())
+}
+
+model Notification {
+  id         String   @id @default(cuid())
+  userId     String
+  projectId  String?
+  sessionId  String?
+  runId      String?
+  kind       String
+  priority   Int
+  title      String
+  summary    String
+  deeplink   String
+  read       Boolean  @default(false)
+  groupKey   String?
+  groupCount Int      @default(1)
+  createdAt  DateTime @default(now())
+
+  @@index([userId, read, priority, createdAt])
+  @@index([userId, groupKey, createdAt])
+}
+
+model WebhookSubscription {
+  id        String   @id @default(cuid())
+  userId    String
+  channel   String
+  targetUrl String
+  secret    String?
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  @@index([userId, channel, active])
+}
+
+model UsageEvent {
+  id        String   @id @default(cuid())
+  userId    String
+  projectId String?
+  kind      String
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
+  @@index([projectId, createdAt])
+}
+
+model PushSubscription {
+  id        String   @id @default(cuid())
+  userId    String
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
+
+model ExpoPushToken {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  createdAt DateTime @default(now())
+
+  receiptPendings ExpoReceiptPending[]
+
+  @@index([userId])
+}
+
+model ExpoReceiptPending {
+  id          String        @id @default(cuid())
+  tokenRowId  String
+  tokenRow    ExpoPushToken @relation(fields: [tokenRowId], references: [id], onDelete: Cascade)
+  ticketId    String
+  attempt     Int           @default(0)
+  scheduledAt DateTime
+  createdAt   DateTime      @default(now())
+
+  @@unique([tokenRowId, ticketId])
+  @@index([scheduledAt])
+}
+
+model ChannelLink {
+  id             String   @id @default(cuid())
+  userId         String
+  channel        String
+  externalUserId String
+  createdAt      DateTime @default(now())
+
+  @@unique([channel, externalUserId])
+  @@index([userId, channel])
+}

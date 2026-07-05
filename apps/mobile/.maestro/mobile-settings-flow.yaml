@@ -1,0 +1,10 @@
+# P7 mobile 23차 — settings smoke (설정 화면 진입 후 assert)
+appId: dev.cursor.remote
+---
+- launchApp
+- assertVisible: "Cursor Remote Dev"
+- tapOn:
+    text: "설정"
+    optional: true
+- assertVisible: "API Base URL"
+- assertVisible: "저장 후 연결"

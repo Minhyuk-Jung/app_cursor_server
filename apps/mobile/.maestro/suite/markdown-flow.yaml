@@ -1,0 +1,33 @@
+# P7 mobile 27차 — suite session markdown preview
+appId: dev.cursor.remote
+---
+- tapOn:
+    id: "home-tab-projects"
+- extendedWaitUntil:
+    visible: "maestro-e2e"
+    timeout: 45000
+- tapOn: "maestro-e2e"
+- tapOn:
+    id: "project-nav-files"
+- extendedWaitUntil:
+    visible: "README.md"
+    timeout: 30000
+- tapOn: "README.md"
+- tapOn: "미리보기"
+- extendedWaitUntil:
+    visible:
+      id: "markdown-preview"
+    timeout: 30000
+- assertVisible: "Maestro preview"
+- assertVisible: "todo item"
+- assertVisible: "GFM footnote body"
+- tapOn:
+    id: "footnote-ref-note"
+- assertVisible:
+    id: "footnote-note"
+- tapOn: "편집"
+- assertVisible: "Maestro preview"
+- tapOn:
+    id: "project-back-btn"
+- assertVisible:
+    id: "home-tab-projects"

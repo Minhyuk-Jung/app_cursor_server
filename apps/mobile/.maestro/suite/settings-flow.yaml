@@ -1,0 +1,13 @@
+# P7 mobile 27차 — suite session settings (진입·assert·뒤로)
+appId: dev.cursor.remote
+---
+- assertVisible:
+    id: "home-tab-projects"
+- tapOn:
+    id: "settings-open-btn"
+- assertVisible: "API Base URL"
+- assertVisible: "저장 후 연결"
+- tapOn:
+    id: "settings-back-btn"
+- assertVisible:
+    id: "home-tab-projects"

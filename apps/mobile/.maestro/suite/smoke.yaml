@@ -1,0 +1,5 @@
+# P7 mobile 27차 — suite session smoke (home only — state 보존)
+appId: dev.cursor.remote
+---
+- assertVisible:
+    id: "home-tab-projects"

@@ -1,0 +1,8 @@
+# P7 mobile 28차 — suite session usage tab (UR-14)
+appId: dev.cursor.remote
+---
+- tapOn:
+    id: "home-tab-usage"
+- assertVisible:
+    id: "usage-screen"
+- assertVisible: "사용량"

@@ -1,0 +1,22 @@
+# P7 mobile 24차 — Git 탭 (upstream hint + 로딩 대기)
+appId: dev.cursor.remote
+---
+- launchApp
+- assertVisible: "Cursor Remote Dev"
+- tapOn:
+    id: "home-tab-projects"
+    optional: true
+- extendedWaitUntil:
+    visible: "maestro-e2e"
+    timeout: 45000
+- tapOn: "maestro-e2e"
+- tapOn:
+    id: "project-nav-git"
+- assertVisible: "Git 상태"
+- extendedWaitUntil:
+    visible:
+      id: "git-status-panel"
+    timeout: 30000
+- assertVisible:
+    id: "git-upstream-sync"
+- assertVisible: "upstream 미설정"

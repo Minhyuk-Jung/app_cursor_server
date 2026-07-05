@@ -1,0 +1,23 @@
+# P7 mobile 23차 — 프로젝트 탭 풀 smoke (maestro-e2e + testID)
+appId: dev.cursor.remote
+---
+- launchApp
+- assertVisible: "Cursor Remote Dev"
+- tapOn:
+    id: "home-tab-projects"
+    optional: true
+- extendedWaitUntil:
+    visible: "maestro-e2e"
+    timeout: 45000
+- tapOn: "maestro-e2e"
+- assertVisible:
+    id: "project-nav-sessions"
+- tapOn:
+    id: "project-nav-git"
+- assertVisible: "Git 상태"
+- tapOn:
+    id: "project-nav-files"
+- assertVisible: "README.md"
+- tapOn:
+    id: "project-nav-diff"
+- assertVisible: "변경 리뷰"

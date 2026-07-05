@@ -1,0 +1,13 @@
+# P7 mobile 28차 — device E2E 단일 세션 suite (cold start 1회)
+appId: dev.cursor.remote
+---
+- runFlow: mobile-api-setup.yaml
+- runFlow: suite/smoke.yaml
+- runFlow: suite/settings-flow.yaml
+- runFlow: suite/project-flow.yaml
+- runFlow: suite/inbox-flow.yaml
+- runFlow: suite/inbox-git-flow.yaml
+- runFlow: suite/usage-flow.yaml
+- runFlow: suite/files-flow.yaml
+- runFlow: suite/git-flow.yaml
+- runFlow: suite/markdown-flow.yaml

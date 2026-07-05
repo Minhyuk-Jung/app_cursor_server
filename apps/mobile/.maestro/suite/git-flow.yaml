@@ -1,0 +1,23 @@
+# P7 mobile 27차 — suite session git tab
+appId: dev.cursor.remote
+---
+- tapOn:
+    id: "home-tab-projects"
+- extendedWaitUntil:
+    visible: "maestro-e2e"
+    timeout: 45000
+- tapOn: "maestro-e2e"
+- tapOn:
+    id: "project-nav-git"
+- assertVisible: "Git 상태"
+- extendedWaitUntil:
+    visible:
+      id: "git-status-panel"
+    timeout: 30000
+- assertVisible:
+    id: "git-upstream-sync"
+- assertVisible: "upstream 미설정"
+- tapOn:
+    id: "project-back-btn"
+- assertVisible:
+    id: "home-tab-projects"

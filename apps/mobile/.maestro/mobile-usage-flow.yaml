@@ -1,0 +1,10 @@
+# P7 mobile 29차 — usage tab smoke (UR-14)
+appId: dev.cursor.remote
+---
+- launchApp
+- assertVisible: "Cursor Remote Dev"
+- tapOn:
+    id: "home-tab-usage"
+- assertVisible:
+    id: "usage-screen"
+- assertVisible: "사용량"

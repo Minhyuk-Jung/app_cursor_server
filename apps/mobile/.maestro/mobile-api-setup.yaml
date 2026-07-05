@@ -1,0 +1,11 @@
+# P7 mobile 26차 — API 연결 (auto-connect + clearState cold start)
+appId: dev.cursor.remote
+---
+- launchApp:
+    clearState: true
+- extendedWaitUntil:
+    visible:
+      id: "home-tab-projects"
+    timeout: 60000
+- assertVisible:
+    id: "home-tab-projects"
