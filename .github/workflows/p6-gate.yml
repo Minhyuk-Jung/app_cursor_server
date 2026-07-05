@@ -7,8 +7,43 @@ on:
   pull_request:
 
 jobs:
-  docker-sandbox:
-    name: Docker sandbox (SEC-04 / NFR-13)
+  docker-sandbox-core:
+    name: Docker sandbox core (SEC-04)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build shared
+        run: npm run build -w @app/shared
+
+      - name: Generate Prisma client
+        working-directory: apps/server
+        run: npx prisma generate
+
+      - name: Docker sandbox tests (core)
+        working-directory: apps/server
+        run: |
+          npx vitest run --no-file-parallelism --maxWorkers=1 \
+            src/services/exec/docker-sandbox-manager.test.ts \
+            src/services/exec/p6-docker.integration.test.ts \
+            src/core/sdk/container-sdk-bridge.test.ts \
+            src/services/exec/sandbox-errors.test.ts \
+            src/services/exec/exec-service.test.ts \
+            src/services/exec/exec-resource-limit.test.ts \
+            src/services/exec/preview-registry.test.ts \
+            src/services/exec/terminal-connection-registry.test.ts \
+            src/config.sandbox.test.ts
+
+  docker-sandbox-sdk:
+    name: Docker sandbox SDK (ADR-007 POC 3)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -30,20 +65,6 @@ jobs:
 
       - name: Build sandbox-sdk image (ADR-007 POC 3)
         run: docker build -t cursor-sandbox-sdk:ci apps/server/docker/sandbox-sdk
-
-      - name: Docker sandbox tests (core)
-        working-directory: apps/server
-        run: |
-          npx vitest run --no-file-parallelism --maxWorkers=1 \
-            src/services/exec/docker-sandbox-manager.test.ts \
-            src/services/exec/p6-docker.integration.test.ts \
-            src/core/sdk/container-sdk-bridge.test.ts \
-            src/services/exec/sandbox-errors.test.ts \
-            src/services/exec/exec-service.test.ts \
-            src/services/exec/exec-resource-limit.test.ts \
-            src/services/exec/preview-registry.test.ts \
-            src/services/exec/terminal-connection-registry.test.ts \
-            src/config.sandbox.test.ts
 
       - name: Docker sandbox tests (SDK in container)
         working-directory: apps/server

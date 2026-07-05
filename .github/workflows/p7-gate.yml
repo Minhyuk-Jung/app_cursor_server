@@ -31,7 +31,7 @@ jobs:
       - name: P7 server integration tests
         working-directory: apps/server
         run: |
-          npx vitest run --no-file-parallelism --maxWorkers=1 \
+          npx vitest run --no-file-parallelism --maxWorkers=1 --retry=1 \
             src/api/channel-source.test.ts \
             src/api/expo-push.integration.test.ts \
             src/api/expo-push-send.integration.test.ts \

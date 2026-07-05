@@ -1,20 +1,26 @@
 import { test, expect } from "@playwright/test";
 
-const API = process.env.E2E_API_URL ?? "http://127.0.0.1:3099";
-const WEB = process.env.E2E_WEB_URL ?? "http://127.0.0.1:5199";
+function apiUrl(): string {
+  return process.env.E2E_API_URL ?? "http://127.0.0.1:3099";
+}
+
+function webUrl(): string {
+  return process.env.E2E_WEB_URL ?? "http://127.0.0.1:5199";
+}
+
 const AUTH = { authorization: "Bearer dev-local-key" };
 
 test.describe("S17 — 터미널 UI (P6 E2E, 15+13)", () => {
   test("터미널 탭에서 npm test 출력 확인", async ({ page, request }) => {
     const projectName = `e2e-s17-ui-${Date.now()}`;
-    const projectRes = await request.post(`${API}/api/v1/projects`, {
+    const projectRes = await request.post(`${apiUrl()}/api/v1/projects`, {
       headers: AUTH,
       data: { name: projectName },
     });
     expect(projectRes.ok()).toBeTruthy();
     const { projectId } = (await projectRes.json()) as { projectId: string };
 
-    await request.put(`${API}/api/v1/projects/${projectId}/file`, {
+    await request.put(`${apiUrl()}/api/v1/projects/${projectId}/file`, {
       headers: AUTH,
       data: {
         path: "package.json",
@@ -32,10 +38,10 @@ test.describe("S17 — 터미널 UI (P6 E2E, 15+13)", () => {
           JSON.stringify({ apiBaseUrl: apiUrl, apiKey }),
         );
       },
-      { apiUrl: API, apiKey: "dev-local-key" },
+      { apiUrl: apiUrl(), apiKey: "dev-local-key" },
     );
 
-    await page.goto(WEB);
+    await page.goto(webUrl());
 
     await page.getByRole("button", { name: projectName }).click();
     await page.getByTestId("project-tab-terminal").click();
@@ -74,7 +80,7 @@ test.describe("S17 — 터미널 UI (P6 E2E, 15+13)", () => {
 
     try {
       const projectName = `e2e-preview-ui-${Date.now()}`;
-      const projectRes = await request.post(`${API}/api/v1/projects`, {
+      const projectRes = await request.post(`${apiUrl()}/api/v1/projects`, {
         headers: AUTH,
         data: { name: projectName },
       });
@@ -87,10 +93,10 @@ test.describe("S17 — 터미널 UI (P6 E2E, 15+13)", () => {
             JSON.stringify({ apiBaseUrl: apiUrl, apiKey }),
           );
         },
-        { apiUrl: API, apiKey: "dev-local-key" },
+        { apiUrl: apiUrl(), apiKey: "dev-local-key" },
       );
 
-      await page.goto(WEB);
+      await page.goto(webUrl());
       await page.getByRole("button", { name: projectName }).click();
       await page.getByTestId("project-tab-terminal").click();
       await expect(page.getByTestId("terminal-status")).toContainText("준비됨", {

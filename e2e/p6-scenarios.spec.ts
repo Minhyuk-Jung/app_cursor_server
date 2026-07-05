@@ -1,14 +1,20 @@
 import { test, expect } from "@playwright/test";
 import WebSocket from "ws";
 
-const API = process.env.E2E_API_URL ?? "http://127.0.0.1:3099";
-const WS_BASE = API.replace(/^http/, "ws");
+function apiUrl(): string {
+  return process.env.E2E_API_URL ?? "http://127.0.0.1:3099";
+}
+
+function wsBase(): string {
+  return apiUrl().replace(/^http/, "ws");
+}
+
 const AUTH = { authorization: "Bearer dev-local-key" };
 
 async function issueWsToken(
   request: import("@playwright/test").APIRequestContext,
 ): Promise<string> {
-  const res = await request.post(`${API}/api/v1/ws-token`, { headers: AUTH });
+  const res = await request.post(`${apiUrl()}/api/v1/ws-token`, { headers: AUTH });
   expect(res.ok()).toBeTruthy();
   const { token } = (await res.json()) as { token: string };
   return token;
@@ -25,7 +31,7 @@ async function waitTerminalReady(messages: string[]): Promise<void> {
 
 test.describe("S17 — 터미널·프리뷰 (P6 E2E smoke)", () => {
   test("프리뷰 토큰 발급", async ({ request }) => {
-    const projectRes = await request.post(`${API}/api/v1/projects`, {
+    const projectRes = await request.post(`${apiUrl()}/api/v1/projects`, {
       headers: AUTH,
       data: { name: `e2e-term-${Date.now()}` },
     });
@@ -33,7 +39,7 @@ test.describe("S17 — 터미널·프리뷰 (P6 E2E smoke)", () => {
     const { projectId } = (await projectRes.json()) as { projectId: string };
 
     const previewRes = await request.post(
-      `${API}/api/v1/projects/${projectId}/preview`,
+      `${apiUrl()}/api/v1/projects/${projectId}/preview`,
       {
         headers: AUTH,
         data: { port: 5173 },
@@ -49,14 +55,14 @@ test.describe("S17 — 터미널·프리뷰 (P6 E2E smoke)", () => {
   });
 
   test("프리뷰 포트 범위 밖 거부", async ({ request }) => {
-    const projectRes = await request.post(`${API}/api/v1/projects`, {
+    const projectRes = await request.post(`${apiUrl()}/api/v1/projects`, {
       headers: AUTH,
       data: { name: `e2e-port-${Date.now()}` },
     });
     const { projectId } = (await projectRes.json()) as { projectId: string };
 
     const previewRes = await request.post(
-      `${API}/api/v1/projects/${projectId}/preview`,
+      `${apiUrl()}/api/v1/projects/${projectId}/preview`,
       {
         headers: AUTH,
         data: { port: 22 },
@@ -66,7 +72,7 @@ test.describe("S17 — 터미널·프리뷰 (P6 E2E smoke)", () => {
   });
 
   test("터미널 WebSocket에서 명령 출력 스트림", async ({ request }) => {
-    const projectRes = await request.post(`${API}/api/v1/projects`, {
+    const projectRes = await request.post(`${apiUrl()}/api/v1/projects`, {
       headers: AUTH,
       data: { name: `e2e-ws-${Date.now()}` },
     });
@@ -74,7 +80,7 @@ test.describe("S17 — 터미널·프리뷰 (P6 E2E smoke)", () => {
 
     const wsToken = await issueWsToken(request);
     const ws = new WebSocket(
-      `${WS_BASE}/api/v1/projects/${projectId}/terminal?token=${encodeURIComponent(wsToken)}`,
+      `${wsBase()}/api/v1/projects/${projectId}/terminal?token=${encodeURIComponent(wsToken)}`,
     );
     const messages: string[] = [];
     ws.on("message", (d) => messages.push(String(d)));
@@ -102,13 +108,13 @@ test.describe("S17 — 터미널·프리뷰 (P6 E2E smoke)", () => {
   });
 
   test("S17 npm test 출력 스트림", async ({ request }) => {
-    const projectRes = await request.post(`${API}/api/v1/projects`, {
+    const projectRes = await request.post(`${apiUrl()}/api/v1/projects`, {
       headers: AUTH,
       data: { name: `e2e-npm-${Date.now()}` },
     });
     const { projectId } = (await projectRes.json()) as { projectId: string };
 
-    await request.put(`${API}/api/v1/projects/${projectId}/file`, {
+    await request.put(`${apiUrl()}/api/v1/projects/${projectId}/file`, {
       headers: AUTH,
       data: {
         path: "package.json",
@@ -121,7 +127,7 @@ test.describe("S17 — 터미널·프리뷰 (P6 E2E smoke)", () => {
 
     const wsToken = await issueWsToken(request);
     const ws = new WebSocket(
-      `${WS_BASE}/api/v1/projects/${projectId}/terminal?token=${encodeURIComponent(wsToken)}`,
+      `${wsBase()}/api/v1/projects/${projectId}/terminal?token=${encodeURIComponent(wsToken)}`,
     );
     const messages: string[] = [];
     ws.on("message", (d) => messages.push(String(d)));
@@ -173,19 +179,19 @@ test.describe("S17 — 터미널·프리뷰 (P6 E2E smoke)", () => {
     });
 
     try {
-      const projectRes = await request.post(`${API}/api/v1/projects`, {
+      const projectRes = await request.post(`${apiUrl()}/api/v1/projects`, {
         headers: AUTH,
         data: { name: `e2e-preview-ws-${Date.now()}` },
       });
       const { projectId } = (await projectRes.json()) as { projectId: string };
 
       const previewRes = await request.post(
-        `${API}/api/v1/projects/${projectId}/preview`,
+        `${apiUrl()}/api/v1/projects/${projectId}/preview`,
         { headers: AUTH, data: { port: upstream.port } },
       );
       const { previewPath } = (await previewRes.json()) as { previewPath: string };
 
-      const ws = new WebSocket(`${WS_BASE}${previewPath}`);
+      const ws = new WebSocket(`${wsBase()}${previewPath}`);
       const msg = await new Promise<string>((resolve, reject) => {
         ws.once("message", (d) => resolve(String(d)));
         ws.once("error", reject);
@@ -216,20 +222,20 @@ test.describe("S17 — 터미널·프리뷰 (P6 E2E smoke)", () => {
     );
 
     try {
-      const projectRes = await request.post(`${API}/api/v1/projects`, {
+      const projectRes = await request.post(`${apiUrl()}/api/v1/projects`, {
         headers: AUTH,
         data: { name: `e2e-preview-${Date.now()}` },
       });
       const { projectId } = (await projectRes.json()) as { projectId: string };
 
       const previewRes = await request.post(
-        `${API}/api/v1/projects/${projectId}/preview`,
+        `${apiUrl()}/api/v1/projects/${projectId}/preview`,
         { headers: AUTH, data: { port: stub.port } },
       );
       expect(previewRes.ok()).toBeTruthy();
       const { previewPath } = (await previewRes.json()) as { previewPath: string };
 
-      const proxyRes = await request.get(`${API}${previewPath}`);
+      const proxyRes = await request.get(`${apiUrl()}${previewPath}`);
       expect(proxyRes.ok()).toBeTruthy();
       expect(await proxyRes.text()).toContain("e2e-preview-proxy");
     } finally {
@@ -240,7 +246,7 @@ test.describe("S17 — 터미널·프리뷰 (P6 E2E smoke)", () => {
 
 test.describe("Health (P6 exec)", () => {
   test("sandbox mode in health", async ({ request }) => {
-    const res = await request.get(`${API}/health`);
+    const res = await request.get(`${apiUrl()}/health`);
     expect(res.ok()).toBeTruthy();
     const body = (await res.json()) as {
       exec: {
