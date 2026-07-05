@@ -24,17 +24,12 @@ export function verifyContainerSdkPackage(containerName: string): void {
       "docker",
       [
         "exec",
-        "-w",
-        "/opt/cursor-sdk",
         containerName,
-        "node",
-        "-e",
-        "require.resolve('@cursor/sdk')",
+        "test",
+        "-f",
+        "/opt/cursor-sdk/node_modules/@cursor/sdk/package.json",
       ],
-      {
-        encoding: "utf8",
-        stdio: ["ignore", "pipe", "ignore"],
-      },
+      { stdio: ["ignore", "pipe", "ignore"] },
     );
   } catch {
     throw new Error(
