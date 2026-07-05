@@ -11,6 +11,8 @@ const emulatorScript = join(mobileRoot, "scripts/maestro-emulator-ci.sh");
 
 const workflowSnippets = [
   "EXPO_PUBLIC_MAESTRO_E2E",
+  "maestro-android-build.mjs",
+  "MAESTRO_ANDROID_BUILD_APK",
   "android-emulator-runner",
   "maestro-emulator-ci.sh",
   "disable-animations: true",

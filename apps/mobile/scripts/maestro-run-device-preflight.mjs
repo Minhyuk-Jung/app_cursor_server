@@ -11,6 +11,7 @@ const emulatorScript = join(mobileRoot, "scripts/maestro-emulator-ci.sh");
 
 execSync("node scripts/maestro-gate.mjs", { stdio: "inherit" });
 execSync("node scripts/maestro-workflow-gate.mjs", { stdio: "inherit" });
+execSync("node scripts/expo-monorepo-guard.mjs", { stdio: "inherit" });
 
 if (!existsSync(emulatorScript)) {
   throw new Error("Missing scripts/maestro-emulator-ci.sh");

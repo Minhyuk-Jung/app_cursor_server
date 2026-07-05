@@ -8,3 +8,5 @@ dist/
 coverage/
 .workspaces/
 test-results/
+apps/mobile/android/
+apps/mobile/ios/
