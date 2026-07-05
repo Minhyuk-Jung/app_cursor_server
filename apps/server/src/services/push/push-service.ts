@@ -215,15 +215,18 @@ export class PushService {
     try {
       const scheduledAt = new Date(Date.now() + delayMs);
       if (attempt === 0) {
-        await prisma.expoReceiptPending.createMany({
-          data: pairs.map((pair) => ({
-            tokenRowId: pair.tokenRowId,
-            ticketId: pair.ticketId,
-            attempt,
-            scheduledAt,
-          })),
-          skipDuplicates: true,
-        });
+        for (const pair of pairs) {
+          await prisma.expoReceiptPending.create({
+            data: {
+              tokenRowId: pair.tokenRowId,
+              ticketId: pair.ticketId,
+              attempt,
+              scheduledAt,
+            },
+          }).catch((err: { code?: string }) => {
+            if (err.code !== "P2002") throw err;
+          });
+        }
         return;
       }
       for (const pair of pairs) {

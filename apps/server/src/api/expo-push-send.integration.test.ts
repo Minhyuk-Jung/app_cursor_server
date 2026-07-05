@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { createApp, type AppContext } from "../app.js";
-import { prisma } from "../db/client.js";
+import { disconnectDb, prisma } from "../db/client.js";
+import { useTestDatabase } from "../test-helpers/db.js";
 
 describe("Expo push dispatch (P7 mobile 4차)", () => {
   let ctx: AppContext;
@@ -12,7 +13,7 @@ describe("Expo push dispatch (P7 mobile 4차)", () => {
       json: async () => ({ data: { status: "ok", id: "ticket-1" } }),
     });
     vi.stubGlobal("fetch", fetchMock);
-    process.env.DATABASE_URL = "file:./test-expo-push-send.db";
+    await useTestDatabase("file:./test-expo-push-send.db");
     ctx = await createApp({ port: 0 });
   });
 
@@ -30,6 +31,7 @@ describe("Expo push dispatch (P7 mobile 4차)", () => {
   afterAll(async () => {
     vi.unstubAllGlobals();
     await ctx.app.close();
+    await disconnectDb();
   });
 
   it("sends run_done to Expo when token registered", async () => {

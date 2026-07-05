@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { createApp, type AppContext } from "../app.js";
-import { prisma } from "../db/client.js";
+import { disconnectDb, prisma } from "../db/client.js";
+import { useTestDatabase } from "../test-helpers/db.js";
 
 const AUTH = { authorization: "Bearer dev-local-key" };
 
@@ -8,7 +9,7 @@ describe("Expo push subscribe (P7 mobile 3차)", () => {
   let ctx: AppContext;
 
   beforeAll(async () => {
-    process.env.DATABASE_URL = "file:./test-expo-push.db";
+    await useTestDatabase("file:./test-expo-push.db");
     ctx = await createApp({ port: 0 });
   });
 
@@ -18,6 +19,7 @@ describe("Expo push subscribe (P7 mobile 3차)", () => {
 
   afterAll(async () => {
     await ctx.app.close();
+    await disconnectDb();
   });
 
   it("registers Expo push token for user", async () => {

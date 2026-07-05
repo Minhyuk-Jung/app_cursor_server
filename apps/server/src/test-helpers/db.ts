@@ -1,7 +1,7 @@
 import { execSync } from "node:child_process";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { prisma } from "../db/client.js";
+import { prisma, switchDatabaseUrl } from "../db/client.js";
 
 const SERVER_ROOT = path.resolve(
   path.dirname(fileURLToPath(import.meta.url)),
@@ -19,8 +19,7 @@ export function ensureTestDbSchema(): void {
 
 /** Vitest 병렬 실행 시 Prisma singleton DB 전환 */
 export async function useTestDatabase(databaseUrl: string): Promise<void> {
-  process.env.DATABASE_URL = databaseUrl;
-  await prisma.$disconnect();
+  await switchDatabaseUrl(databaseUrl);
   ensureTestDbSchema();
 }
 

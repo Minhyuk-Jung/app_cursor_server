@@ -242,7 +242,6 @@ jobs:
 
   p6-p7-shared-runtime-api-e2e:
     name: P6→P7 shared-runtime API E2E (04+05)
-    if: ${{ secrets.CURSOR_API_KEY != '' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -266,6 +265,7 @@ jobs:
         run: docker build -t cursor-sandbox-sdk:ci apps/server/docker/sandbox-sdk
 
       - name: Shared-runtime SessionManager API E2E
+        if: ${{ secrets.CURSOR_API_KEY != '' }}
         run: npx playwright test -c e2e/playwright.api.shared-runtime.config.ts e2e/p6-shared-runtime-api.spec.ts
         env:
           CI: "1"
@@ -274,7 +274,6 @@ jobs:
 
   p6-p7-shared-runtime-ui-e2e:
     name: P6→P7 shared-runtime UI E2E (15+04+05)
-    if: ${{ secrets.CURSOR_API_KEY != '' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -301,6 +300,7 @@ jobs:
         run: npx playwright install chromium
 
       - name: Shared-runtime chat UI E2E
+        if: ${{ secrets.CURSOR_API_KEY != '' }}
         run: npx playwright test -c e2e/playwright.ui.shared-runtime.config.ts e2e/p6-shared-runtime-ui.spec.ts
         env:
           CI: "1"

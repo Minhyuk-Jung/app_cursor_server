@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import { createApp, shutdownApp, type AppContext } from "../../app.js";
 import { disconnectDb, prisma } from "../../db/client.js";
+import { useTestDatabase } from "../../test-helpers/db.js";
 
 /** P7 S30 — app wiring: run_done → telegram sendMessage */
 describe("Telegram S30 outbound integration", () => {
@@ -8,7 +9,7 @@ describe("Telegram S30 outbound integration", () => {
   let fetchMock: ReturnType<typeof vi.fn>;
 
   beforeAll(async () => {
-    process.env.DATABASE_URL = "file:./test-s30-app.db";
+    await useTestDatabase("file:./test-s30-app.db");
     process.env.WORKSPACE_ROOT = "./test-workspaces-s30";
     fetchMock = vi.fn(async (url: string | URL, init?: RequestInit) => {
       const href = String(url);

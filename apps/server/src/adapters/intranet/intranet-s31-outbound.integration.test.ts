@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import { createApp, shutdownApp, type AppContext } from "../../app.js";
 import { disconnectDb, prisma } from "../../db/client.js";
+import { useTestDatabase } from "../../test-helpers/db.js";
 
 /** P7 S31 — run_done → intranet notify URL (outbound) */
 describe("Intranet S31 outbound integration", () => {
@@ -9,7 +10,7 @@ describe("Intranet S31 outbound integration", () => {
   const NOTIFY_URL = "https://intranet.local/api/notify";
 
   beforeAll(async () => {
-    process.env.DATABASE_URL = "file:./test-s31-outbound.db";
+    await useTestDatabase("file:./test-s31-outbound.db");
     process.env.WORKSPACE_ROOT = "./test-workspaces-s31-out";
     fetchMock = vi.fn(async () => Response.json({ ok: true }));
     vi.stubGlobal("fetch", fetchMock);
