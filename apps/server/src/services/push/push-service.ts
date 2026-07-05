@@ -1,4 +1,5 @@
 import webpush from "web-push";
+import { Prisma } from "@prisma/client";
 import { prisma } from "../../db/client.js";
 import {
   getExpoPushReceipts,
