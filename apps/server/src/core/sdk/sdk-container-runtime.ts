@@ -24,6 +24,8 @@ export function verifyContainerSdkPackage(containerName: string): void {
       "docker",
       [
         "exec",
+        "-w",
+        "/opt/cursor-sdk",
         containerName,
         "node",
         "-e",

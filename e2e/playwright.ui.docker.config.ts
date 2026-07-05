@@ -7,30 +7,6 @@ const WEB_URL = process.env.E2E_WEB_URL ?? `http://127.0.0.1:${WEB_PORT}`;
 process.env.E2E_API_URL = API_URL;
 process.env.E2E_WEB_URL = WEB_URL;
 
-// #region agent log
-fetch("http://127.0.0.1:7382/ingest/303537a0-5c93-4719-98b8-81fc4995f26d", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-    "X-Debug-Session-Id": "0c6964",
-  },
-  body: JSON.stringify({
-    sessionId: "0c6964",
-    hypothesisId: "H1",
-    location: "playwright.ui.docker.config.ts:boot",
-    message: "docker ui playwright config ports",
-    data: {
-      API_PORT,
-      WEB_PORT,
-      API_URL,
-      WEB_URL,
-      SANDBOX_DOCKER_IMAGE: process.env.SANDBOX_DOCKER_IMAGE ?? null,
-    },
-    timestamp: Date.now(),
-  }),
-}).catch(() => {});
-// #endregion
-
 /** S17 UI E2E — docker sandbox (13 §10, 21-test-strategy P6) */
 export default defineConfig({
   testDir: ".",

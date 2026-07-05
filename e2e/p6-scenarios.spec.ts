@@ -5,24 +5,6 @@ const API = process.env.E2E_API_URL ?? "http://127.0.0.1:3099";
 const WS_BASE = API.replace(/^http/, "ws");
 const AUTH = { authorization: "Bearer dev-local-key" };
 
-// #region agent log
-fetch("http://127.0.0.1:7382/ingest/303537a0-5c93-4719-98b8-81fc4995f26d", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-    "X-Debug-Session-Id": "0c6964",
-  },
-  body: JSON.stringify({
-    sessionId: "0c6964",
-    hypothesisId: "H1",
-    location: "p6-scenarios.spec.ts:module",
-    message: "spec resolved API base",
-    data: { API, E2E_API_URL: process.env.E2E_API_URL ?? null },
-    timestamp: Date.now(),
-  }),
-}).catch(() => {});
-// #endregion
-
 async function issueWsToken(
   request: import("@playwright/test").APIRequestContext,
 ): Promise<string> {

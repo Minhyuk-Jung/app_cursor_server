@@ -52,29 +52,6 @@ const ctx = await createApp({
   ...(cursorApiKey ? { cursorApiKey } : {}),
 });
 await ctx.app.listen({ port, host: "127.0.0.1" });
-// #region agent log
-fetch("http://127.0.0.1:7382/ingest/303537a0-5c93-4719-98b8-81fc4995f26d", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-    "X-Debug-Session-Id": "0c6964",
-  },
-  body: JSON.stringify({
-    sessionId: "0c6964",
-    hypothesisId: "H3",
-    location: "e2e-server.ts:listen",
-    message: "e2e server started",
-    data: {
-      port,
-      sandboxMode,
-      sandboxDockerImage: sandboxDockerImage ?? null,
-      sdkInContainer,
-      ci: process.env.CI ?? null,
-    },
-    timestamp: Date.now(),
-  }),
-}).catch(() => {});
-// #endregion
 console.log(
   `E2E server listening on ${port} (sandbox=${sandboxMode}${execTimeoutMs ? `, execTimeoutMs=${execTimeoutMs}` : ""}${sdkInContainer ? ", sdkInContainer" : ""})`,
 );
