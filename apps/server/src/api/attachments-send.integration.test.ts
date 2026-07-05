@@ -2,6 +2,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { createApp, shutdownApp, type AppContext } from "../app.js";
 import { disconnectDb, prisma } from "../db/client.js";
 import { useTestDatabase } from "../test-helpers/db.js";
+import { waitForSessionSettled } from "../test-helpers/integration.js";
 const AUTH = { authorization: "Bearer dev-local-key" };
 
 /** UR-15/S27 — attachment upload + send_prompt message content */
@@ -35,6 +36,7 @@ describe("send_prompt attachments (UR-15)", () => {
   });
 
   afterAll(async () => {
+    await waitForSessionSettled(sessionId);
     await ctx.telegramPullPoller?.stop();
     await ctx.intranetPullPoller?.stop();
     await shutdownApp(ctx);
@@ -75,6 +77,7 @@ describe("send_prompt attachments (UR-15)", () => {
     expect(stored).toHaveLength(1);
     expect(stored[0]!.ref).toBe(ref);
     expect(stored[0]!.kind).toBe("image");
+    await waitForSessionSettled(sessionId);
   });
 
   it("GET attachment returns stored mime type", async () => {
