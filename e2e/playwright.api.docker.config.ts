@@ -21,8 +21,6 @@ export default defineConfig({
       E2E_SANDBOX_MODE: "docker",
       DATABASE_URL: "file:./e2e-docker-api.db",
       WORKSPACE_ROOT: "./e2e-docker-api-workspaces",
-      SANDBOX_DOCKER_IMAGE:
-        process.env.SANDBOX_DOCKER_IMAGE ?? "cursor-sandbox-sdk:ci",
     },
   },
 });
